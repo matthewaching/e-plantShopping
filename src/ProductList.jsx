@@ -9,8 +9,8 @@ function ProductList({ onHomeClick }) {
 
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-    const [addedToCart, setAddedToCart] = useState({});
 
+    const addedToCart = useSelector(state => state.cart.items.map(item => item.name));
     const cartCount = useSelector(state => state.cart.items.reduce((total, item) => total + item.quantity, 0));
 
     const plantsArray = [
@@ -263,10 +263,6 @@ function ProductList({ onHomeClick }) {
 
     const handleAddToCart = (product) => {
         dispatch(addItem(product));
-        setAddedToCart((prevState) => ({
-            ...prevState,
-            [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
-        }));
     };
 
     return (
@@ -304,7 +300,13 @@ function ProductList({ onHomeClick }) {
                                         <div className="product-title">{plant.name}</div>
                                         <div className="product-title">{plant.description}</div>
                                         <div className="product-price">{plant.cost}</div>
-                                        <button className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        <button
+                                            className={addedToCart.includes(plant.name) ? "product-button.added-to-cart" : "product-button"}
+                                            onClick={() => handleAddToCart(plant)}
+                                            disabled={addedToCart.includes(plant.name)}
+                                        >
+                                            Add to Cart
+                                        </button>
                                     </div>
                                 ))}
                             </div>
